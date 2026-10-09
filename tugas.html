@@ -1,0 +1,544 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Persegi Panjang</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #080f20;
+            color: #f1f5ff;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo {
+            font-size: 50px;
+            color: #60a5fa;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            font-size: clamp(27px, 4vw, 42px);
+            margin-bottom: 12px;
+        }
+
+        h1 span {
+            color: #60a5fa;
+        }
+
+        header p,
+        .description {
+            color: #9eafd0;
+            line-height: 1.7;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background: #101a30;
+            border: 1px solid #263b60;
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .card h2 {
+            font-size: 21px;
+            margin-bottom: 15px;
+        }
+
+        .description {
+            font-size: 14px;
+            margin-bottom: 22px;
+        }
+
+        .input-group {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 9px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            align-items: center;
+            border: 1px solid #34517e;
+            border-radius: 11px;
+            overflow: hidden;
+            background: #0b1427;
+            transition: border-color 0.2s;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px #3b82f622;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            min-width: 0;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            font-size: 17px;
+            padding: 17px;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #7185a7;
+            font-size: 14px;
+        }
+
+        .unit {
+            padding: 17px;
+            background: #1b2a46;
+            color: #93c5fd;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 11px;
+            padding: 15px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+        }
+
+        .reset {
+            background: #1b2942;
+            border: 1px solid #34517e;
+            color: #dbeafe;
+            margin-top: 4px;
+        }
+
+        .visual-area {
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 45px 45px 30px;
+            background-image:
+                linear-gradient(#20314c55 1px, transparent 1px),
+                linear-gradient(90deg, #20314c55 1px, transparent 1px);
+            background-size: 22px 22px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .rectangle {
+            width: 80%;
+            aspect-ratio: 4 / 1;
+            flex-shrink: 0;
+            background: linear-gradient(
+                135deg,
+                #3b82f6bb,
+                #2563eb77
+            );
+            border: 3px solid #60a5fa;
+            border-radius: 3px;
+            position: relative;
+            transition: width 0.25s, aspect-ratio 0.25s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 25px #3b82f622;
+        }
+
+        .dimension {
+            position: absolute;
+            color: #bfdbfe;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .dimension.top {
+            bottom: calc(100% + 12px);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dimension.left {
+            right: calc(100% + 10px);
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .visual-note {
+            margin-top: 15px;
+            padding: 14px;
+            border: 1px solid #254c82;
+            border-radius: 10px;
+            color: #a9c5ed;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .message {
+            color: #fca5a5;
+            font-size: 13px;
+            margin-top: 12px;
+            line-height: 1.5;
+            min-height: 18px;
+        }
+
+        .results {
+            margin-top: 22px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .result-box {
+            padding: 22px;
+            border-radius: 12px;
+            min-width: 0;
+        }
+
+        .area-box {
+            background: #0d302f;
+            border: 1px solid #10b981;
+        }
+
+        .perimeter-box {
+            background: #251b40;
+            border: 1px solid #8b5cf6;
+        }
+
+        .result-label {
+            font-size: 14px;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+
+        .area-box .result-label {
+            color: #5eead4;
+        }
+
+        .perimeter-box .result-label {
+            color: #c4b5fd;
+        }
+
+        .result-value {
+            font-size: clamp(25px, 4vw, 36px);
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .formula {
+            margin-top: 12px;
+            color: #a9bad7;
+            font-size: 13px;
+            line-height: 1.7;
+            overflow-wrap: anywhere;
+        }
+
+        footer {
+            text-align: center;
+            color: #9eafd0;
+            font-size: 13px;
+            margin-top: 28px;
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 25px 14px;
+            }
+
+            .main-grid,
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 19px;
+            }
+
+            .visual-area {
+                min-height: 240px;
+                padding-left: 42px;
+                padding-right: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+
+        <header>
+            <div class="logo">▱</div>
+            <h1>Luas & Keliling <span>Persegi Panjang</span></h1>
+            <p>
+                Masukkan panjang dan lebar untuk menghitung
+                luas serta keliling secara otomatis.
+            </p>
+        </header>
+
+        <section class="main-grid">
+
+            <!-- INPUT UKURAN -->
+            <div class="card">
+                <h2>✎ Input Ukuran</h2>
+                <p class="description">
+                    Masukkan ukuran dalam satuan meter (m).
+                    Hasil akan dihitung secara otomatis.
+                </p>
+
+                <div class="input-group">
+                    <label for="panjang">Panjang (m)</label>
+
+                    <div class="input-wrapper">
+                        <input
+                            type="number"
+                            id="panjang"
+                            min="0.01"
+                            max="1000000"
+                            step="any"
+                            placeholder="Masukkan panjang..."
+                            value="20"
+                        >
+                        <span class="unit">m</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="lebar">Lebar (m)</label>
+
+                    <div class="input-wrapper">
+                        <input
+                            type="number"
+                            id="lebar"
+                            min="0.01"
+                            max="1000000"
+                            step="any"
+                            placeholder="Masukkan lebar..."
+                            value="5"
+                        >
+                        <span class="unit">m</span>
+                    </div>
+                </div>
+
+                <button class="reset" type="button" id="reset">
+                    ↻ Atur Ulang
+                </button>
+
+                <p class="message" id="pesan" role="alert"></p>
+            </div>
+
+            <!-- VISUAL PERSEGI PANJANG -->
+            <div class="card">
+                <h2>▱ Visual Persegi Panjang</h2>
+                <p class="description">
+                    Bentuk berubah mengikuti perbandingan panjang dan lebar.
+                </p>
+
+                <div class="visual-area">
+                    <div class="rectangle" id="rectangle">
+                        <span class="dimension top" id="labelPanjang">
+                            20 m
+                        </span>
+
+                        <span class="dimension left" id="labelLebar">
+                            5 m
+                        </span>
+                    </div>
+                </div>
+
+                <div class="visual-note" id="visualNote">
+                    Panjang = 20 m (horizontal)<br>
+                    Lebar = 5 m (vertikal)
+                </div>
+            </div>
+
+        </section>
+
+        <!-- HASIL PERHITUNGAN -->
+        <section class="card results">
+            <h2>✧ Hasil Perhitungan</h2>
+
+            <div class="result-grid">
+
+                <div class="result-box area-box">
+                    <p class="result-label">▢ Luas</p>
+                    <p class="result-value" id="luas">100 m²</p>
+                    <p class="formula" id="rumusLuas">
+                        20 × 5 = 100
+                    </p>
+                </div>
+
+                <div class="result-box perimeter-box">
+                    <p class="result-label">▧ Keliling</p>
+                    <p class="result-value" id="keliling">50 m</p>
+                    <p class="formula" id="rumusKeliling">
+                        2 × (20 + 5) = 50
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <footer>
+            ✦ Matematika itu mudah, asal tahu caranya! ✦
+        </footer>
+
+    </main>
+
+    <script>
+        const inputPanjang = document.getElementById("panjang");
+        const inputLebar = document.getElementById("lebar");
+        const rectangle = document.getElementById("rectangle");
+        const pesan = document.getElementById("pesan");
+
+        function formatAngka(angka) {
+            return angka.toLocaleString("id-ID", {
+                maximumFractionDigits: 4
+            });
+        }
+
+        function hitung() {
+            const panjang = inputPanjang.valueAsNumber;
+            const lebar = inputLebar.valueAsNumber;
+
+            const panjangValid =
+                Number.isFinite(panjang) &&
+                panjang > 0 &&
+                panjang <= 1000000;
+
+            const lebarValid =
+                Number.isFinite(lebar) &&
+                lebar > 0 &&
+                lebar <= 1000000;
+
+            // Perbarui label visual jika nilainya valid.
+            document.getElementById("labelPanjang").textContent =
+                panjangValid ? formatAngka(panjang) + " m" : "Panjang";
+
+            document.getElementById("labelLebar").textContent =
+                lebarValid ? formatAngka(lebar) + " m" : "Lebar";
+
+            // Jika salah satu input belum valid, jangan hitung.
+            if (!panjangValid || !lebarValid) {
+                document.getElementById("luas").textContent = "—";
+                document.getElementById("keliling").textContent = "—";
+
+                document.getElementById("rumusLuas").textContent =
+                    "Masukkan kedua ukuran untuk melihat hasil.";
+
+                document.getElementById("rumusKeliling").textContent = "";
+
+                document.getElementById("visualNote").innerHTML =
+                    `Panjang = ${panjangValid ? formatAngka(panjang) + " m" : "Belum diisi"}<br>` +
+                    `Lebar = ${lebarValid ? formatAngka(lebar) + " m" : "Belum diisi"}`;
+
+                pesan.textContent =
+                    "Isi panjang dan lebar dengan angka lebih dari 0, maksimal 1.000.000.";
+
+                return;
+            }
+
+            pesan.textContent = "";
+
+            // Task 1: variabel panjang dan lebar
+            // berasal dari input pengguna.
+
+            // Task 2: menghitung luas.
+            const luas = panjang * lebar;
+
+            // Task 3: menghitung keliling.
+            const keliling = 2 * (panjang + lebar);
+
+            // Menampilkan hasil luas.
+            document.getElementById("luas").textContent =
+                formatAngka(luas) + " m²";
+
+            document.getElementById("rumusLuas").textContent =
+                `${formatAngka(panjang)} × ${formatAngka(lebar)} = ${formatAngka(luas)}`;
+
+            // Menampilkan hasil keliling.
+            document.getElementById("keliling").textContent =
+                formatAngka(keliling) + " m";
+
+            document.getElementById("rumusKeliling").textContent =
+                `2 × (${formatAngka(panjang)} + ${formatAngka(lebar)}) = ${formatAngka(keliling)}`;
+
+            // Memperbarui keterangan visual.
+            document.getElementById("visualNote").innerHTML =
+                `Panjang = ${formatAngka(panjang)} m (horizontal)<br>` +
+                `Lebar = ${formatAngka(lebar)} m (vertikal)`;
+
+            // Menyesuaikan proporsi persegi panjang.
+            const rasio = panjang / lebar;
+            let lebarVisual;
+            let tinggiVisual;
+
+            if (rasio >= 1) {
+                lebarVisual = 80;
+                tinggiVisual = 80 / rasio;
+            } else {
+                tinggiVisual = 2.5;
+                lebarVisual = 80 * rasio;
+            }
+
+            // Membatasi ukuran agar bentuk tetap terlihat.
+            lebarVisual = Math.max(8, Math.min(80, lebarVisual));
+            tinggiVisual = Math.max(8, Math.min(80, tinggiVisual));
+
+            rectangle.style.width = lebarVisual + "%";
+            rectangle.style.aspectRatio =
+                `${lebarVisual} / ${tinggiVisual}`;
+        }
+
+        // Hitung langsung saat pengguna mengetik.
+        inputPanjang.addEventListener("input", hitung);
+        inputLebar.addEventListener("input", hitung);
+
+        // Mengembalikan nilai ke ukuran awal.
+        document.getElementById("reset").addEventListener("click", function() {
+            inputPanjang.value = ;
+            inputLebar.value = ;
+            hitung();
+        });
+
+        // Hitung saat halaman pertama kali dibuka.
+        hitung();
+    </script>
+</body>
+</html>
